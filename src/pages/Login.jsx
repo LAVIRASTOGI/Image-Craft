@@ -1,27 +1,44 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+// Validation schema
+const schema = yup.object({
+  email: yup
+    .string()
+    .required("Email is required")
+    .email("Please enter a valid email address"),
+  password: yup
+    .string()
+    .required("Password is required")
+    .min(6, "Password must be at least 6 characters"),
+});
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-
   const { backendUrl, setToken, setUser } = useContext(AppContext);
   const navigate = useNavigate();
 
-  const onSubmitHandler = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onBlur", // Validate on blur
+  });
 
+  const onSubmitHandler = async (formData) => {
     try {
       const { data } = await axios.post(backendUrl + "/api/user/login", {
-        email,
-        password,
+        email: formData.email,
+        password: formData.password,
       });
 
       if (data.success) {
@@ -35,8 +52,6 @@ const Login = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -64,9 +79,9 @@ const Login = () => {
           </p>
         </div>
 
-        <form onSubmit={onSubmitHandler} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmitHandler)} className="space-y-4">
           <div className="relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2">
+            <div className="absolute left-3 top-6 -translate-y-1/2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 text-gray-400"
@@ -78,13 +93,20 @@ const Login = () => {
               </svg>
             </div>
             <input
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-blue-500 transition-colors"
+              {...register("email")}
+              className={`w-full pl-10 pr-4 py-3 bg-gray-50 border rounded-lg outline-none transition-colors ${
+                errors.email
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-gray-200 focus:border-blue-500"
+              }`}
               type="email"
               placeholder="Email address"
-              required
             />
+            {errors.email && (
+              <p className="mt-1 text-red-500 text-xs">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           <div className="relative">
@@ -103,13 +125,20 @@ const Login = () => {
               </svg>
             </div>
             <input
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-              className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-blue-500 transition-colors"
+              {...register("password")}
+              className={`w-full pl-10 pr-4 py-3 bg-gray-50 border rounded-lg outline-none transition-colors ${
+                errors.password
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-gray-200 focus:border-blue-500"
+              }`}
               type="password"
               placeholder="Password"
-              required
             />
+            {errors.password && (
+              <p className="mt-1 text-red-500 text-xs">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           <div className="flex justify-end">
@@ -123,10 +152,10 @@ const Login = () => {
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center"
+            disabled={isSubmitting}
+            className="w-full py-3 bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center disabled:opacity-70"
           >
-            {loading ? (
+            {isSubmitting ? (
               <svg
                 className="animate-spin h-5 w-5 mr-3 text-white"
                 viewBox="0 0 24 24"
@@ -152,7 +181,7 @@ const Login = () => {
 
         <div className="mt-6 text-center">
           <p className="text-gray-600">
-            Don&apos;t have an account?
+            Don&apos;apos;t have an account?
             <Link
               to="/register"
               className="ml-1 text-blue-600 hover:text-blue-800 font-medium"
