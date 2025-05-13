@@ -1,20 +1,24 @@
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
-import { AppContext } from "./AppContext";
+
+export const AppContext = createContext();
 
 const AppContextProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [user, setUser] = useState(null);
-  const [credit, setCredit] = useState(false);
+  const [credit, setCredit] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
 
   const loadCreditsData = async () => {
+    if (!token) return;
+    
     try {
+      setLoading(true);
       const { data } = await axios.get(backendUrl + "/api/user/credits", {
         headers: { token },
       });
@@ -24,11 +28,23 @@ const AppContextProvider = ({ children }) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
+      if (error.response?.status === 401) {
+        // Token expired or invalid
+        logout();
+      } else {
+        toast.error(error.response?.data?.message || error.message);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   const generateImage = async (prompt) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    
     try {
       const { data } = await axios.post(
         backendUrl + "/api/image/generate-image",
@@ -47,11 +63,21 @@ const AppContextProvider = ({ children }) => {
         }
       }
     } catch (error) {
-      toast.error(error.message);
+      if (error.response?.status === 401) {
+        logout();
+        navigate("/login");
+      } else {
+        toast.error(error.response?.data?.message || error.message);
+      }
     }
   };
 
   const removeBackground = async (imageFile) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    
     try {
       const formData = new FormData();
       formData.append("image", imageFile);
@@ -78,7 +104,12 @@ const AppContextProvider = ({ children }) => {
         }
       }
     } catch (error) {
-      toast.error(error.message || "Failed to remove background");
+      if (error.response?.status === 401) {
+        logout();
+        navigate("/login");
+      } else {
+        toast.error(error.response?.data?.message || "Failed to remove background");
+      }
     }
   };
 
@@ -86,6 +117,8 @@ const AppContextProvider = ({ children }) => {
     localStorage.removeItem("token");
     setToken("");
     setUser(null);
+    setCredit(0);
+    navigate("/login");
   };
 
   useEffect(() => {
@@ -101,6 +134,7 @@ const AppContextProvider = ({ children }) => {
     setUser,
     credit,
     setCredit,
+    loading,
     loadCreditsData,
     backendUrl,
     generateImage,
@@ -109,10 +143,6 @@ const AppContextProvider = ({ children }) => {
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
-};
-
-AppContextProvider.propTypes = {
-  children: PropTypes.node.isRequired,
 };
 
 export default AppContextProvider;

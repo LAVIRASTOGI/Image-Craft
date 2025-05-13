@@ -5,7 +5,7 @@ import { AppContext } from "../context/AppContext";
 import { motion } from "framer-motion";
 
 const Navbar = () => {
-  const { setShowLogin, user, credit, logout } = useContext(AppContext);
+  const { user, credit, logout } = useContext(AppContext);
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
 
@@ -183,12 +183,12 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="flex items-center gap-2 sm:gap-5">
-                <button
-                  onClick={() => setShowLogin(true)}
+                <Link
+                  to="/login"
                   className="bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-white px-7 py-2 sm:px-8 sm:py-2.5 text-sm rounded-full hover:shadow-lg transition-all"
                 >
-                  Get Started
-                </button>
+                  Login
+                </Link>
               </div>
             )}
           </div>

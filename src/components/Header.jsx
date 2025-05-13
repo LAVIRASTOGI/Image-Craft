@@ -5,7 +5,7 @@ import { AppContext } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
-  const { user, setShowLogin } = useContext(AppContext);
+  const { user } = useContext(AppContext);
   const navigate = useNavigate();
   const [activeFeature, setActiveFeature] = useState("generate");
 
@@ -13,7 +13,7 @@ const Header = () => {
     if (user) {
       navigate("/result", { state: { feature } });
     } else {
-      setShowLogin(true);
+      navigate("/login");
     }
   };
 
