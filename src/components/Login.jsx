@@ -1,0 +1,224 @@
+import { useContext, useEffect, useState } from "react";
+import { assets } from "../assets/assets";
+import { AppContext } from "../context/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { motion } from "framer-motion";
+
+const Login = () => {
+  const [state, setState] = useState("Login");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { backendUrl, setShowLogin, setToken, setUser } =
+    useContext(AppContext);
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+
+    try {
+      if (state === "Login") {
+        const { data } = await axios.post(backendUrl + "/api/user/login", {
+          email,
+          password,
+        });
+
+        if (data.success) {
+          setToken(data.token);
+          setUser(data.user);
+          localStorage.setItem("token", data.token);
+          setShowLogin(false);
+          toast.success("Login successful!");
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        const { data } = await axios.post(backendUrl + "/api/user/register", {
+          name,
+          email,
+          password,
+        });
+
+        if (data.success) {
+          setToken(data.token);
+          setUser(data.user);
+          localStorage.setItem("token", data.token);
+          setShowLogin(false);
+          toast.success("Account created successfully!");
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  useEffect(() => {
+    // Disable scrolling on body when the login is open
+    document.body.style.overflow = "hidden";
+
+    // Cleanup function to re-enable scrolling
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
+  return (
+    <div className="absolute top-0 left-0 right-0 bottom-0 z-10 backdrop-blur-sm bg-black/30 flex justify-center items-center">
+      <motion.div
+        className="relative bg-white p-8 md:p-10 rounded-2xl shadow-2xl max-w-md w-full mx-4"
+        initial={{ opacity: 0.2, y: 50 }}
+        transition={{ duration: 0.3 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+      >
+        <button
+          onClick={() => setShowLogin(false)}
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+        >
+          <img className="w-4 h-4" src={assets.cross_icon} alt="Close" />
+        </button>
+
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <img
+                className="w-6 h-6"
+                src={assets.logo_icon}
+                alt="ImageCraft Logo"
+              />
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-800">{state}</h1>
+          <p className="text-sm text-gray-500 mt-2">
+            {state === "Login"
+              ? "Welcome back to ImageCraft! Please sign in to continue"
+              : "Join ImageCraft to unleash your creative potential"}
+          </p>
+        </div>
+
+        <form onSubmit={onSubmitHandler} className="space-y-4">
+          {state !== "Login" && (
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-gray-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <input
+                onChange={(e) => setName(e.target.value)}
+                value={name}
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-blue-500 transition-colors"
+                type="text"
+                placeholder="Full Name"
+                required
+              />
+            </div>
+          )}
+
+          <div className="relative">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-gray-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+              </svg>
+            </div>
+            <input
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-blue-500 transition-colors"
+              type="email"
+              placeholder="Email address"
+              required
+            />
+          </div>
+
+          <div className="relative">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-gray-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <input
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-blue-500 transition-colors"
+              type="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+
+          {state === "Login" && (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Forgot password?
+              </button>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all"
+          >
+            {state === "Login" ? "Sign In" : "Create Account"}
+          </button>
+        </form>
+
+        <div className="mt-6 text-center">
+          {state === "Login" ? (
+            <p className="text-gray-600">
+              Don't have an account?
+              <button
+                onClick={() => setState("Sign Up")}
+                className="ml-1 text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Sign up
+              </button>
+            </p>
+          ) : (
+            <p className="text-gray-600">
+              Already have an account?
+              <button
+                onClick={() => setState("Login")}
+                className="ml-1 text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Sign in
+              </button>
+            </p>
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default Login;

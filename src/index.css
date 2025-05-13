@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.grey-placeholder::placeholder {
+  color: #d1d5db;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c7d2fe;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a5b4fc;
+}
+
+/* Glass morphism */
+.glass {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Feature card hover effects */
+.feature-card {
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Custom gradient text */
+.gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
+}
+
+/* Custom button styles */
+.btn-primary {
+  @apply px-6 py-3 bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-white font-medium rounded-full shadow-lg hover:shadow-blue-200/50 transition-all duration-300;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 bg-white text-gray-800 font-medium rounded-full shadow-md border border-gray-200 hover:bg-gray-50 transition-all duration-300;
+}
+
+/* Image hover effects */
+.img-hover {
+  transition: all 0.3s ease;
+  filter: brightness(0.95);
+}
+
+.img-hover:hover {
+  filter: brightness(1.05);
+  transform: scale(1.02);
+}
+
+/* Custom input styles */
+.input-primary {
+  @apply w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all;
+}
+
+/* Card styles */
+.card {
+  @apply bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-md border border-gray-100;
+}
+
+/* Tab styles */
+.tab {
+  @apply px-4 py-2 rounded-full cursor-pointer transition-all;
+}
+
+.tab-active {
+  @apply bg-blue-600 text-white shadow-lg shadow-blue-200;
+}
+
+.tab-inactive {
+  @apply bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-gray-100;
+}
