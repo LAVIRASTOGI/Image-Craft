@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { assets } from "../assets/assets";
 import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
@@ -8,6 +8,8 @@ const Navbar = () => {
   const { user, credit, logout } = useContext(AppContext);
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
+  const [featuresOpen, setFeaturesOpen] = useState(false);
+  const featuresRef = useRef(null);
 
   // Handle scroll effect
   useEffect(() => {
@@ -21,6 +23,20 @@ const Navbar = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (featuresRef.current && !featuresRef.current.contains(event.target)) {
+        setFeaturesOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   return (
@@ -58,11 +74,16 @@ const Navbar = () => {
               Home
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <div className="relative group">
-              <button className="text-gray-700 hover:text-blue-600 transition-colors flex items-center gap-1">
+            <div className="relative group" ref={featuresRef}>
+              <button
+                className="text-gray-700 hover:text-blue-600 transition-colors flex items-center gap-1"
+                onClick={() => setFeaturesOpen(!featuresOpen)}
+              >
                 Features
                 <svg
-                  className="w-4 h-4 transition-transform group-hover:rotate-180"
+                  className={`w-4 h-4 transition-transform ${
+                    featuresOpen ? "rotate-180" : ""
+                  }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -75,7 +96,11 @@ const Navbar = () => {
                   ></path>
                 </svg>
               </button>
-              <div className="absolute hidden group-hover:block top-full left-0 mt-2 w-56 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2 z-50">
+              <div
+                className={`absolute top-full left-0 mt-2 w-56 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2 z-50 ${
+                  featuresOpen ? "block" : "hidden"
+                }`}
+              >
                 <div className="py-1">
                   <Link
                     to="/result"
