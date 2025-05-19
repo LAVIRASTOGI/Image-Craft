@@ -82,11 +82,11 @@ const AppContextProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     setToken("");
     setUser(null);
-  };
+  }, []);
 
   const fetchUserData = useCallback(async () => {
     const { data } = await axios.get(backendUrl + "/api/user/fetch-user", {
@@ -94,8 +94,11 @@ const AppContextProvider = ({ children }) => {
     });
     if (data.success) {
       setUser(data.user);
+    } else {
+      toast.error(data.message);
+      logout();
     }
-  }, [backendUrl, token]);
+  }, [backendUrl, token, logout]);
 
   useEffect(() => {
     if (token) {
