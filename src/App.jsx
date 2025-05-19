@@ -7,7 +7,6 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Verify from "./pages/Verify";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -50,7 +49,6 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/verify" element={<Verify />} />
         </Routes>
       </div>
       <Footer />

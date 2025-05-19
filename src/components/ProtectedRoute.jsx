@@ -1,15 +1,33 @@
-import { Navigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import PropTypes from "prop-types";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
-  const { user } = useContext(AppContext);
+  const { backendUrl, token, setUser, user } = useContext(AppContext);
+  const navigate = useNavigate();
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const { data } = await axios.get(backendUrl + "/api/user/fetch-user", {
+        headers: { token },
+      });
+      if (data.success) {
+        setUser(data.user);
+      } else {
+        navigate("/login");
+      }
+    };
+    if (token) {
+      if (!user) {
+        fetchUserData();
+      }
+    } else {
+      navigate("/login");
+    }
+  }, []);
 
   return children;
 };

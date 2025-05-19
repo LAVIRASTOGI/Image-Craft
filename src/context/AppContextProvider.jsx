@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -13,20 +13,20 @@ const AppContextProvider = ({ children }) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
 
-  const loadCreditsData = async () => {
+  const loadCreditsData = useCallback(async () => {
     try {
       const { data } = await axios.get(backendUrl + "/api/user/credits", {
         headers: { token },
       });
       if (data.success) {
         setCredit(data.credits);
-        setUser(data.user);
+        // setUser(data.user);
       }
     } catch (error) {
       console.log(error);
       toast.error(error.message);
     }
-  };
+  }, [backendUrl, token]);
 
   const generateImage = async (prompt) => {
     try {
@@ -88,11 +88,23 @@ const AppContextProvider = ({ children }) => {
     setUser(null);
   };
 
+  const fetchUserData = useCallback(async () => {
+    const { data } = await axios.get(backendUrl + "/api/user/fetch-user", {
+      headers: { token },
+    });
+    if (data.success) {
+      setUser(data.user);
+    }
+  }, [backendUrl, token]);
+
   useEffect(() => {
     if (token) {
-      loadCreditsData();
+      if (!user) {
+        fetchUserData();
+        loadCreditsData();
+      }
     }
-  }, [token]);
+  }, [token, loadCreditsData, fetchUserData, user]);
 
   const value = {
     token,

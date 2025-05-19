@@ -1,34 +1,88 @@
-import React, { useContext, useState } from 'react'
-import { plans, assets } from '../assets/assets'
-import { AppContext } from '../context/AppContext'
-import axios from 'axios'
-import { toast } from 'react-toastify'
-import { motion } from 'framer-motion'
-
+import { useContext, useState } from "react";
+import { plans, assets } from "../assets/assets";
+import { AppContext } from "../context/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 const BuyCredit = () => {
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("razorpay");
 
-  const [selectedPlan, setSelectedPlan] = useState(null)
-  const [paymentMethod, setPaymentMethod] = useState('razorpay')
-
-  const { backendUrl, token, loadCreditsData } = useContext(AppContext)
+  const { backendUrl, token, loadCreditsData } = useContext(AppContext);
+  const navigate = useNavigate();
 
   const onSubmitHandler = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-      const { data } = await axios.post(backendUrl + '/api/payment/checkout', { plan: selectedPlan, paymentMethod }, { headers: { token } })
+      // Step 1: Initialize payment with Razorpay
+      const { data } = await axios.post(
+        backendUrl + "/api/user/pay-razor",
+        {
+          planId: selectedPlan,
+          amount: plans.find((plan) => plan.id === selectedPlan)?.price,
+          credits: plans.find((plan) => plan.id === selectedPlan)?.credits,
+        },
+        { headers: { token } }
+      );
 
-      if (data.success) {
-        toast.success('Payment successful')
-        loadCreditsData()
-      } else {
-        toast.error(data.message)
+      if (!data.order) {
+        console.log(data);
+        toast.error("Could not create payment order");
+        return;
       }
 
+      // Step 2: Configure Razorpay options
+      const options = {
+        key: data.key_id,
+        amount: data.order.amount,
+        currency: data.order.currency,
+        name: "Imagify",
+        description: `${selectedPlan} Plan Purchase`,
+        order_id: data.order.id,
+        handler: async function (response) {
+          try {
+            // Step 3: Verify payment
+            const verifyData = await axios.post(
+              backendUrl + "/api/user/verify-razor",
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                plan: selectedPlan,
+              }
+            );
+
+            if (verifyData.data.success) {
+              navigate("/result");
+              toast.success("Payment successful");
+              loadCreditsData();
+            } else {
+              toast.error(
+                verifyData.data.message || "Payment verification failed"
+              );
+            }
+          } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+          }
+        },
+        prefill: {
+          name: "User",
+        },
+        theme: {
+          color: "#3B82F6",
+        },
+      };
+
+      // Step 4: Open Razorpay payment modal
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
     } catch (error) {
-      toast.error(error.message)
+      console.log(error);
+      toast.error(error.response?.data?.message || error.message);
     }
-  }
+  };
 
   return (
     <div className="py-16 relative overflow-hidden">
@@ -47,7 +101,8 @@ const BuyCredit = () => {
           Choose Your Plan
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          Select the perfect plan for your needs and unlock the full potential of ImageCraft's AI-powered tools.
+          Select the perfect plan for your needs and unlock the full potential
+          of ImageCraft&apos;s AI-powered tools.
         </p>
       </motion.div>
 
@@ -57,9 +112,9 @@ const BuyCredit = () => {
             <motion.div
               key={plan.id}
               className={`relative rounded-2xl overflow-hidden ${
-                selectedPlan === plan.id 
-                  ? 'ring-4 ring-blue-500 transform scale-105' 
-                  : 'border border-gray-200'
+                selectedPlan === plan.id
+                  ? "ring-4 ring-blue-500 transform scale-105"
+                  : "border border-gray-200"
               } transition-all duration-300`}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -71,69 +126,126 @@ const BuyCredit = () => {
                   Most Popular
                 </div>
               )}
-              
-              <div className={`p-8 ${plan.id === "Professional" ? 'pt-10' : ''} bg-white/90 backdrop-blur-sm h-full flex flex-col`}>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">{plan.id}</h3>
+
+              <div
+                className={`p-8 ${
+                  plan.id === "Professional" ? "pt-10" : ""
+                } bg-white/90 backdrop-blur-sm h-full flex flex-col`}
+              >
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                  {plan.id}
+                </h3>
                 <div className="flex items-baseline mb-6">
-                  <span className="text-4xl font-extrabold text-gray-900">₹{plan.price}</span>
+                  <span className="text-4xl font-extrabold text-gray-900">
+                    ₹{plan.price}
+                  </span>
                   <span className="ml-1 text-gray-500">/one-time</span>
                 </div>
-                
+
                 <div className="bg-blue-50 rounded-lg p-4 mb-6">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Credits</span>
-                    <span className="text-xl font-bold text-blue-600">{plan.credits}</span>
+                    <span className="text-xl font-bold text-blue-600">
+                      {plan.credits}
+                    </span>
                   </div>
                 </div>
-                
+
                 <p className="text-gray-600 mb-6">{plan.desc}</p>
-                
+
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-center">
-                    <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+                    <svg
+                      className="w-5 h-5 text-green-500 mr-2"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      ></path>
                     </svg>
-                    <span className="text-gray-600">Text to Image Generation</span>
+                    <span className="text-gray-600">
+                      Text to Image Generation
+                    </span>
                   </li>
                   <li className="flex items-center">
-                    <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+                    <svg
+                      className="w-5 h-5 text-green-500 mr-2"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      ></path>
                     </svg>
                     <span className="text-gray-600">Background Removal</span>
                   </li>
                   <li className="flex items-center">
-                    <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+                    <svg
+                      className="w-5 h-5 text-green-500 mr-2"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      ></path>
                     </svg>
                     <span className="text-gray-600">Watermark Removal</span>
                   </li>
                   {plan.id !== "Basic" && (
                     <li className="flex items-center">
-                      <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+                      <svg
+                        className="w-5 h-5 text-green-500 mr-2"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        ></path>
                       </svg>
                       <span className="text-gray-600">Priority Processing</span>
                     </li>
                   )}
                   {plan.id === "Enterprise" && (
                     <li className="flex items-center">
-                      <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+                      <svg
+                        className="w-5 h-5 text-green-500 mr-2"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        ></path>
                       </svg>
                       <span className="text-gray-600">Dedicated Support</span>
                     </li>
                   )}
                 </ul>
-                
+
                 <button
                   onClick={() => setSelectedPlan(plan.id)}
                   className={`mt-auto w-full py-3 rounded-lg font-medium transition-all ${
                     selectedPlan === plan.id
-                      ? 'bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-white'
-                      : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                      ? "bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-white"
+                      : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                   }`}
                 >
-                  {selectedPlan === plan.id ? 'Selected' : 'Select Plan'}
+                  {selectedPlan === plan.id ? "Selected" : "Select Plan"}
                 </button>
               </div>
             </motion.div>
@@ -147,75 +259,67 @@ const BuyCredit = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h3 className="text-xl font-bold text-gray-800 mb-6">Payment Method</h3>
-            
+            <h3 className="text-xl font-bold text-gray-800 mb-6">
+              Payment Method
+            </h3>
+
             <div className="space-y-4 mb-8">
-              <div 
+              <div
                 className={`flex items-center p-4 border rounded-lg cursor-pointer ${
-                  paymentMethod === 'razorpay' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                  paymentMethod === "razorpay"
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-200"
                 }`}
-                onClick={() => setPaymentMethod('razorpay')}
+                onClick={() => setPaymentMethod("razorpay")}
               >
-                <input 
-                  type="radio" 
-                  name="payment" 
-                  checked={paymentMethod === 'razorpay'} 
-                  onChange={() => setPaymentMethod('razorpay')} 
+                <input
+                  type="radio"
+                  name="payment"
+                  checked={paymentMethod === "razorpay"}
+                  onChange={() => setPaymentMethod("razorpay")}
                   className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                 />
                 <label className="ml-3 flex items-center justify-between w-full">
                   <span className="text-gray-700 font-medium">Razorpay</span>
-                  <img src={assets.razorpay_logo} alt="Razorpay" className="h-8" />
-                </label>
-              </div>
-              
-              <div 
-                className={`flex items-center p-4 border rounded-lg cursor-pointer ${
-                  paymentMethod === 'stripe' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
-                }`}
-                onClick={() => setPaymentMethod('stripe')}
-              >
-                <input 
-                  type="radio" 
-                  name="payment" 
-                  checked={paymentMethod === 'stripe'} 
-                  onChange={() => setPaymentMethod('stripe')} 
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                />
-                <label className="ml-3 flex items-center justify-between w-full">
-                  <span className="text-gray-700 font-medium">Stripe</span>
-                  <img src={assets.stripe_logo} alt="Stripe" className="h-8" />
+                  <img
+                    src={assets.razorpay_logo}
+                    alt="Razorpay"
+                    className="h-8"
+                  />
                 </label>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg mb-6">
               <span className="text-gray-700">Selected Plan:</span>
-              <span className="font-semibold text-gray-900">{selectedPlan}</span>
+              <span className="font-semibold text-gray-900">
+                {selectedPlan}
+              </span>
             </div>
-            
+
             <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg mb-8">
               <span className="text-gray-700">Total Amount:</span>
               <span className="font-bold text-xl text-blue-600">
-                ₹{plans.find(plan => plan.id === selectedPlan)?.price}
+                ₹{plans.find((plan) => plan.id === selectedPlan)?.price}
               </span>
             </div>
-            
+
             <button
               onClick={onSubmitHandler}
               className="w-full py-3 bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-white font-medium rounded-lg hover:shadow-lg transition-all"
             >
               Proceed to Payment
             </button>
-            
+
             <p className="text-center text-sm text-gray-500 mt-4">
-              By proceeding, you agree to our Terms of Service and Privacy Policy
+              By proceeding, you agree to our Terms of Service and Privacy
+              Policy
             </p>
           </motion.div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BuyCredit
+export default BuyCredit;
