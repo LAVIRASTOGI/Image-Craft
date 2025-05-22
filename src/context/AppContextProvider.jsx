@@ -82,6 +82,37 @@ const AppContextProvider = ({ children }) => {
     }
   };
 
+  const tonizeImage = async (imageFile) => {
+    try {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+
+      const { data } = await axios.post(
+        backendUrl + "/api/image/tonize-image",
+        formData,
+        {
+          headers: {
+            token,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (data.success) {
+        loadCreditsData();
+        return data.resultImage;
+      } else {
+        toast.error(data.message);
+        loadCreditsData();
+        if (data.creditBalance === 0) {
+          navigate("/buy");
+        }
+      }
+    } catch (error) {
+      toast.error(error.message || "Failed to tonize image");
+    }
+  };
+
   const logout = useCallback(() => {
     localStorage.removeItem("token");
     setToken("");
@@ -120,6 +151,7 @@ const AppContextProvider = ({ children }) => {
     backendUrl,
     generateImage,
     removeBackground,
+    tonizeImage,
     logout,
   };
 

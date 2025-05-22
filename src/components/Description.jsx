@@ -138,18 +138,19 @@ const Description = () => {
                       >
                         <path
                           fillRule="evenodd"
-                          d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                          d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z"
                           clipRule="evenodd"
                         ></path>
                       </svg>
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
-                        Watermark Removal
+                        Image Tonizer
                       </h3>
                       <p className="text-gray-600 text-xs sm:text-sm">
-                        Invaluable for cleaning up stock images for design
-                        projects, application assets, and social media content.
+                        Enhance and adjust the tones of your images with our
+                        advanced AI technology, perfect for creative photo
+                        editing and professional presentations.
                       </p>
                     </div>
                   </div>

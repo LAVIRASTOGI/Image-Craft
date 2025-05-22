@@ -16,7 +16,8 @@ const Result = () => {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [activeTab, setActiveTab] = useState(featureActive);
 
-  const { generateImage, removeBackground } = useContext(AppContext);
+  const { generateImage, removeBackground, tonizeImage } =
+    useContext(AppContext);
 
   const features = [
     {
@@ -52,8 +53,8 @@ const Result = () => {
       ),
     },
     {
-      id: "removeWatermark",
-      title: "Remove Watermarks",
+      id: "tonizeImage",
+      title: "Image Tonizer",
       icon: (
         <svg
           className="w-5 h-5"
@@ -63,7 +64,7 @@ const Result = () => {
         >
           <path
             fillRule="evenodd"
-            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+            d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z"
             clipRule="evenodd"
           ></path>
         </svg>
@@ -81,11 +82,14 @@ const Result = () => {
         setIsImageLoaded(true);
         setImage(generatedImage);
       }
-    } else if (
-      (activeTab === "removeBackground" || activeTab === "removeWatermark") &&
-      uploadedImage
-    ) {
+    } else if (activeTab === "removeBackground" && uploadedImage) {
       const processedImage = await removeBackground(uploadedImage);
+      if (processedImage) {
+        setIsImageLoaded(true);
+        setImage(processedImage);
+      }
+    } else if (activeTab === "tonizeImage" && uploadedImage) {
+      const processedImage = await tonizeImage(uploadedImage);
       if (processedImage) {
         setIsImageLoaded(true);
         setImage(processedImage);
@@ -107,7 +111,7 @@ const Result = () => {
     setIsImageLoaded(false);
     setInput("");
     setUploadedImage(null);
-    if (activeTab === "removeBackground" || activeTab === "removeWatermark") {
+    if (activeTab === "removeBackground" || activeTab === "tonizeImage") {
       setImage(assets.sample_img_2);
     } else {
       setImage(assets.sample_img_1);
@@ -146,7 +150,7 @@ const Result = () => {
             ? "Create Images from Text"
             : activeTab === "removeBackground"
             ? "Remove Image Background"
-            : "Remove Watermarks"}
+            : "Adjust Image Tones"}
         </h1>
 
         {/* Feature Tabs */}
@@ -169,7 +173,7 @@ const Result = () => {
                 {feature.icon}
               </span>
               <span>{feature.title}</span>
-              {feature.id === "removeWatermark" && (
+              {feature.id === "tonizeImage" && (
                 <span className="px-1.5 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full">
                   New
                 </span>
@@ -189,7 +193,7 @@ const Result = () => {
                   {!uploadedImage &&
                   !isImageLoaded &&
                   (activeTab === "removeBackground" ||
-                    activeTab === "removeWatermark") ? (
+                    activeTab === "tonizeImage") ? (
                     <div className="text-center p-8">
                       <svg
                         className="w-16 h-16 mx-auto text-gray-400 mb-4"
@@ -209,7 +213,7 @@ const Result = () => {
                         Upload an image to{" "}
                         {activeTab === "removeBackground"
                           ? "remove its background"
-                          : "remove watermarks"}
+                          : "adjust its tones"}
                       </p>
                     </div>
                   ) : (
@@ -281,7 +285,7 @@ const Result = () => {
 
               {!isImageLoaded &&
                 (activeTab === "removeBackground" ||
-                  activeTab === "removeWatermark") && (
+                  activeTab === "tonizeImage") && (
                   <div className="w-full max-w-2xl mx-auto">
                     <div className="flex flex-col items-center">
                       <label className="w-full flex flex-col items-center justify-center h-32 border-2 border-dashed border-blue-300 rounded-xl cursor-pointer bg-blue-50 hover:bg-blue-100 transition-colors">
@@ -327,7 +331,7 @@ const Result = () => {
                         >
                           {activeTab === "removeBackground"
                             ? "Remove Background"
-                            : "Remove Watermark"}
+                            : "Adjust Tones"}
                           <svg
                             className="w-5 h-5"
                             fill="none"
@@ -380,7 +384,7 @@ const Result = () => {
                         ? "generated"
                         : activeTab === "removeBackground"
                         ? "nobg"
-                        : "nowatermark"
+                        : "tonized"
                     }-${Date.now()}.png`}
                     className="bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-white px-8 py-3 rounded-full cursor-pointer hover:shadow-lg transition-all flex items-center gap-2"
                   >
@@ -461,18 +465,17 @@ const Result = () => {
                 >
                   <path
                     fillRule="evenodd"
-                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z"
                     clipRule="evenodd"
                   ></path>
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                Remove Watermarks
+                Image Tonizer
               </h3>
               <p className="text-gray-600 text-sm">
-                Clean up images by removing unwanted watermarks with our
-                advanced AI technology. Restore your images to their original
-                beauty.
+                Enhance and adjust the tones of your images with our advanced AI
+                technology. Perfect for creative photo editing and enhancement.
               </p>
             </div>
           </div>
