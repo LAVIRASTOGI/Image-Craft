@@ -1,19 +1,20 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useCallback } from "react";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
 import { motion } from "framer-motion";
-import { useLocation } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 const Result = () => {
-  const location = useLocation();
-  const feature = location.state?.feature || "generate";
+  const [searchParams] = useSearchParams();
+  const featureActive = searchParams.get("feature") || "generate";
+  const navigate = useNavigate();
 
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [image, setImage] = useState(assets.sample_img_1);
   const [uploadedImage, setUploadedImage] = useState(null);
-  const [activeTab, setActiveTab] = useState(feature);
+  const [activeTab, setActiveTab] = useState(featureActive);
 
   const { generateImage, removeBackground } = useContext(AppContext);
 
@@ -102,7 +103,7 @@ const Result = () => {
     }
   };
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setIsImageLoaded(false);
     setInput("");
     setUploadedImage(null);
@@ -111,11 +112,22 @@ const Result = () => {
     } else {
       setImage(assets.sample_img_1);
     }
-  };
+  }, [activeTab]);
+
+  useEffect(() => {
+    console.log(featureActive);
+    setActiveTab(featureActive);
+  }, [featureActive]);
 
   useEffect(() => {
     resetForm();
   }, [activeTab]);
+
+  const handleTabChange = (tab) => {
+    // setActiveTab(tab);
+    // setSearchParams({ feature: tab });
+    navigate(`/result?feature=${tab}`);
+  };
 
   return (
     <div className="relative min-h-screen pt-24 pb-10">
@@ -142,7 +154,7 @@ const Result = () => {
           {features.map((feature) => (
             <button
               key={feature.id}
-              onClick={() => setActiveTab(feature.id)}
+              onClick={() => handleTabChange(feature.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${
                 activeTab === feature.id
                   ? "bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-white shadow-lg"

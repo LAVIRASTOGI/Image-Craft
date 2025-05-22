@@ -103,22 +103,19 @@ const Navbar = () => {
               >
                 <div className="py-1">
                   <Link
-                    to="/result"
-                    state={{ feature: "generate" }}
+                    to="/result?feature=generate"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-md"
                   >
                     Text to Image
                   </Link>
                   <Link
-                    to="/result"
-                    state={{ feature: "removeBackground" }}
+                    to="/result?feature=removeBackground"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-md"
                   >
                     Remove Background
                   </Link>
                   <Link
-                    to="/result"
-                    state={{ feature: "removeWatermark" }}
+                    to="/result?feature=removeWatermark"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-md"
                   >
                     Remove Watermarks
