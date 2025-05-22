@@ -78,6 +78,7 @@ const Result = () => {
 
     if (activeTab === "generate" && input) {
       const generatedImage = await generateImage(input);
+      console.log(generatedImage);
       if (generatedImage) {
         setIsImageLoaded(true);
         setImage(generatedImage);
@@ -131,6 +132,30 @@ const Result = () => {
     // setActiveTab(tab);
     // setSearchParams({ feature: tab });
     navigate(`/result?feature=${tab}`);
+  };
+
+  const downloadImageHandler = (e, imageUrl) => {
+    e.stopPropagation();
+    fetch(imageUrl)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `imagecraft-${
+          activeTab === "generate"
+            ? "generated"
+            : activeTab === "removeBackground"
+            ? "nobg"
+            : "tonized"
+        }-${Date.now()}.png`;
+
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((err) => console.error("Download failed:", err));
   };
 
   return (
@@ -351,62 +376,54 @@ const Result = () => {
                     </div>
                   </div>
                 )}
-
-              {isImageLoaded && (
-                <div className="flex gap-4 flex-wrap justify-center mt-6">
-                  <button
-                    type="button"
-                    onClick={resetForm}
-                    className="bg-white border border-gray-300 text-gray-700 px-8 py-3 rounded-full cursor-pointer hover:bg-gray-50 transition-all flex items-center gap-2"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                      ></path>
-                    </svg>
-                    {activeTab === "generate"
-                      ? "Generate Another"
-                      : "Process Another"}
-                  </button>
-                  <a
-                    href={image}
-                    download={`imagecraft-${
-                      activeTab === "generate"
-                        ? "generated"
-                        : activeTab === "removeBackground"
-                        ? "nobg"
-                        : "tonized"
-                    }-${Date.now()}.png`}
-                    className="bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-white px-8 py-3 rounded-full cursor-pointer hover:shadow-lg transition-all flex items-center gap-2"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                      ></path>
-                    </svg>
-                    Download
-                  </a>
-                </div>
-              )}
             </form>
+            {isImageLoaded && (
+              <div className="flex gap-4 flex-wrap justify-center mt-6">
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="bg-white border border-gray-300 text-gray-700 px-8 py-3 rounded-full cursor-pointer hover:bg-gray-50 transition-all flex items-center gap-2"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    ></path>
+                  </svg>
+                  {activeTab === "generate"
+                    ? "Generate Another"
+                    : "Process Another"}
+                </button>
+                <button
+                  onClick={(e) => downloadImageHandler(e, image)}
+                  className="bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-white px-8 py-3 rounded-full cursor-pointer hover:shadow-lg transition-all flex items-center gap-2"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                    ></path>
+                  </svg>
+                  Download
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Feature description cards */}

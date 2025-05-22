@@ -146,7 +146,7 @@ const Navbar = () => {
                 </button>
 
                 <div className="relative group">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 flex items-center justify-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 font-semibold border-2 border-blue-200 cursor-pointer">
+                  <div className="w-10 h-10 rounded-full  flex items-center justify-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 font-semibold border-2 border-blue-200 cursor-pointer">
                     {user.name ? user.name.charAt(0).toUpperCase() : "U"}
                   </div>
                   <div className="absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-12">
