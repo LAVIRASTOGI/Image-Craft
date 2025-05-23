@@ -126,35 +126,6 @@ const Description = () => {
                     </div>
                   </div>
                 </div>
-
-                <div className="bg-white/80 backdrop-blur-sm p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100">
-                  <div className="flex items-start gap-2 sm:gap-3">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-pink-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg
-                        className="w-4 h-4 sm:w-5 sm:h-5 text-pink-600"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z"
-                          clipRule="evenodd"
-                        ></path>
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
-                        Image Tonizer
-                      </h3>
-                      <p className="text-gray-600 text-xs sm:text-sm">
-                        Enhance and adjust the tones of your images with our
-                        advanced AI technology, perfect for creative photo
-                        editing and professional presentations.
-                      </p>
-                    </div>
-                  </div>
-                </div>
               </div>
 
               <motion.button

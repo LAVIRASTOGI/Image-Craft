@@ -114,12 +114,6 @@ const Navbar = () => {
                   >
                     Remove Background
                   </Link>
-                  <Link
-                    to="/result?feature=tonizeImage"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-md"
-                  >
-                    Image Tonizer
-                  </Link>
                 </div>
               </div>
             </div>

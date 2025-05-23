@@ -22,8 +22,7 @@ const Result = () => {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [activeTab, setActiveTab] = useState(featureActive);
 
-  const { generateImage, removeBackground, tonizeImage } =
-    useContext(AppContext);
+  const { generateImage, removeBackground } = useContext(AppContext);
 
   const features = useMemo(
     () => [
@@ -58,25 +57,6 @@ const Result = () => {
             ></path>
           </svg>
         ),
-      },
-      {
-        id: "tonizeImage",
-        title: "Image Tonizer",
-        icon: (
-          <svg
-            className="w-5 h-5"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fillRule="evenodd"
-              d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z"
-              clipRule="evenodd"
-            ></path>
-          </svg>
-        ),
-        badge: "New",
       },
     ],
     []
@@ -120,26 +100,6 @@ const Result = () => {
         iconBgColor: "bg-purple-100",
         iconColor: "text-purple-600",
       },
-      {
-        title: "Image Tonizer",
-        description:
-          "Enhance and adjust the tones of your images with our advanced AI technology. Perfect for creative photo editing and enhancement.",
-        icon: (
-          <svg
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fillRule="evenodd"
-              d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z"
-              clipRule="evenodd"
-            ></path>
-          </svg>
-        ),
-        iconBgColor: "bg-pink-100",
-        iconColor: "text-pink-600",
-      },
     ],
     []
   );
@@ -166,24 +126,11 @@ const Result = () => {
           setIsImageLoaded(true);
           setImage(processedImage);
         }
-      } else if (activeTab === "tonizeImage" && uploadedImage) {
-        const processedImage = await tonizeImage(uploadedImage);
-        if (processedImage) {
-          setIsImageLoaded(true);
-          setImage(processedImage);
-        }
       }
 
       setLoading(false);
     },
-    [
-      activeTab,
-      generateImage,
-      input,
-      removeBackground,
-      tonizeImage,
-      uploadedImage,
-    ]
+    [activeTab, generateImage, input, removeBackground, uploadedImage]
   );
 
   const handleImageUpload = useCallback((e) => {
@@ -202,7 +149,7 @@ const Result = () => {
     setIsImageLoaded(false);
     setInput("");
     setUploadedImage(null);
-    if (activeTab === "removeBackground" || activeTab === "tonizeImage") {
+    if (activeTab === "removeBackground") {
       setImage(assets.sample_img_2);
     } else {
       setImage(assets.sample_img_1);
@@ -260,11 +207,7 @@ const Result = () => {
   }, [activeTab]);
 
   const imagePlaceholder = useMemo(() => {
-    if (
-      !uploadedImage &&
-      !isImageLoaded &&
-      (activeTab === "removeBackground" || activeTab === "tonizeImage")
-    ) {
+    if (!uploadedImage && !isImageLoaded && activeTab === "removeBackground") {
       return (
         <p className="text-gray-500 text-sm sm:text-lg">
           Upload an image to{" "}
@@ -278,7 +221,7 @@ const Result = () => {
   }, [activeTab, isImageLoaded, uploadedImage]);
 
   return (
-    <div className="relative min-h-screen pt-16 sm:pt-24 pb-10 px-4 sm:px-6">
+    <div className="relative min-h-screen pt-16  pb-10 px-4 sm:px-6">
       {/* Background gradient elements */}
       <div className="absolute top-0 left-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
       <div className="absolute top-1/3 right-1/3 w-72 sm:w-96 h-72 sm:h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
@@ -330,21 +273,19 @@ const Result = () => {
                 />
               )}
 
-              {!isImageLoaded &&
-                (activeTab === "removeBackground" ||
-                  activeTab === "tonizeImage") && (
-                  <ImageUploader
-                    onImageUpload={handleImageUpload}
-                    uploadedImage={uploadedImage}
-                    onSubmit={onSubmitHandler}
-                    loading={loading}
-                    actionText={
-                      activeTab === "removeBackground"
-                        ? "Remove Background"
-                        : "Adjust Tones"
-                    }
-                  />
-                )}
+              {!isImageLoaded && activeTab === "removeBackground" && (
+                <ImageUploader
+                  onImageUpload={handleImageUpload}
+                  uploadedImage={uploadedImage}
+                  onSubmit={onSubmitHandler}
+                  loading={loading}
+                  actionText={
+                    activeTab === "removeBackground"
+                      ? "Remove Background"
+                      : "Adjust Tones"
+                  }
+                />
+              )}
             </form>
 
             {isImageLoaded && (
@@ -357,7 +298,7 @@ const Result = () => {
           </div>
 
           {/* Feature description cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mt-8 sm:mt-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2   gap-4 sm:gap-6 mt-8 sm:mt-12">
             {featureCards.map((card, index) => (
               <FeatureCard
                 key={index}
