@@ -243,7 +243,11 @@ const Result = () => {
                     </div>
                   ) : (
                     <img
-                      className="w-full h-full object-contain max-h-[70vh]"
+                      className={`object-contain  max-h-[90vh] ${
+                        uploadedImage
+                          ? "border-2 border-blue-300 shadow-lg p-1 rounded-lg"
+                          : ""
+                      }`}
                       src={image}
                       alt={
                         activeTab === "generate"
