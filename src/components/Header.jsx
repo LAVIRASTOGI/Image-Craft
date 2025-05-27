@@ -63,9 +63,9 @@ const Header = () => {
 
       <motion.div
         className="flex flex-col justify-center items-center text-center my-16 md:my-20 relative z-10"
-        initial={{ opacity: 0.2, y: 100 }}
-        transition={{ duration: 1 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0.6 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
         viewport={{ once: true }}
       >
         <motion.div
@@ -83,9 +83,9 @@ const Header = () => {
 
         <motion.h1
           className="text-center mx-auto mt-10 text-4xl font-bold max-w-[300px] sm:text-7xl sm:max-w-[800px] bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 bg-clip-text text-transparent"
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 0.5 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 2 }}
+          transition={{ duration: 0.5 }}
         >
           Transform your{" "}
           <span className="underline decoration-wavy decoration-blue-400 decoration-2 underline-offset-4">
@@ -96,9 +96,9 @@ const Header = () => {
 
         <motion.p
           className="text-center max-w-2xl mx-auto mt-6 text-gray-600 text-lg"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
         >
           Unleash the power of AI to create stunning visuals, remove
           backgrounds, and enhance image tones with just a few clicks.
@@ -193,6 +193,11 @@ const Header = () => {
                   <motion.img
                     className="w-full h-full object-cover transition-all duration-300 cursor-pointer"
                     src={assets[`sample_img_${index + 1}`]}
+                    width="300"
+                    height="300"
+                    alt={`Sample image ${index + 1}`}
+                    loading={index < 2 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "auto"}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-2">
                     <p className="text-white text-xs">

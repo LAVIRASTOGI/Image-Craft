@@ -8,61 +8,51 @@ const LoadingScreen = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
     >
       <div className="flex flex-col items-center">
         <motion.div
-          className="relative mb-8"
-          initial={{ scale: 0.8, opacity: 0 }}
+          className="relative mb-6"
+          initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.3 }}
         >
-          {/* Logo container with glow effect */}
-          <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur opacity-30 animate-pulse"></div>
-          <div className="relative w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-xl">
+          {/* Logo container with minimal effects */}
+          <div className="relative w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-md">
             <img
               src={assets.favicon}
               alt="ImageCraft Logo"
-              width="48"
-              height="48"
-              className="w-12 h-12"
+              width="40"
+              height="40"
+              className="w-10 h-10"
+              fetchPriority="high"
             />
           </div>
         </motion.div>
 
         {/* Text with gradient */}
         <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
         >
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">
             ImageCraft
           </h1>
         </motion.div>
 
-        {/* Loading indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-          className="mt-6"
-        >
-          <div className="w-48 h-2 bg-gray-200 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500"
-              initial={{ width: 0 }}
-              animate={{ width: "100%" }}
-              transition={{
-                duration: 2,
-                ease: "easeInOut",
-              }}
-            />
-          </div>
-          <p className="text-gray-500 text-sm mt-3 text-center">
-            Loading amazing things...
-          </p>
-        </motion.div>
+        {/* Loading indicator - simplified */}
+        <div className="mt-4 w-40 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500"
+            initial={{ width: 0 }}
+            animate={{ width: "100%" }}
+            transition={{
+              duration: 0.8,
+              ease: "linear",
+            }}
+          />
+        </div>
       </div>
     </motion.div>
   );

@@ -19,11 +19,10 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading time - in production you might want to
-    // track actual resources loading instead of a timeout
+    // Simulate loading time - optimize for better performance
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000); // 2.5 seconds for a good loading experience
+    }, 1000); // 1 second loading for better performance
 
     return () => clearTimeout(timer);
   }, []);
