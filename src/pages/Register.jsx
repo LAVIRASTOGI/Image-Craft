@@ -1,5 +1,4 @@
 import { useContext } from "react";
-import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -77,15 +76,7 @@ const Register = () => {
         transition={{ duration: 0.3 }}
       >
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-              <img
-                className="w-6 h-6"
-                src={assets.logo_icon}
-                alt="ImageCraft Logo"
-              />
-            </div>
-          </div>
+          <div className="flex justify-center mb-4"></div>
           <h1 className="text-2xl font-bold text-gray-800">Create Account</h1>
           <p className="text-sm text-gray-500 mt-2">
             Join ImageCraft to unleash your creative potential
