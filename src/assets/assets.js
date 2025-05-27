@@ -22,6 +22,7 @@ import credit_star from "./credit_star.svg";
 import profile_icon from "./profile_icon.png";
 import razorpay_logo from "./razorpay_logo.png";
 import stripe_logo from "./stripe_logo.png";
+import favicon from "./favicon.svg";
 
 export const assets = {
   logo,
@@ -37,6 +38,7 @@ export const assets = {
   sample_img_4,
   email_icon,
   lock_icon,
+  favicon,
   cross_icon,
   star_group,
   credit_star,

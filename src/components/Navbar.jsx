@@ -50,6 +50,16 @@ const Navbar = () => {
     >
       <div className="flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 group">
+          <div className="relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur opacity-30 group-hover:opacity-70 transition duration-300"></div>
+            <div className="relative w-10 h-10 bg-white rounded-full flex items-center justify-center">
+              <img
+                className="w-6 h-6"
+                src={assets.favicon}
+                alt="ImageCraft Logo"
+              />
+            </div>
+          </div>
           <span className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 bg-clip-text text-transparent">
             ImageCraft
           </span>
@@ -144,25 +154,6 @@ const Navbar = () => {
                         </p>
                       </div>
                       <ul className="list-none m-0 pt-2">
-                        <li
-                          onClick={() => navigate("/result")}
-                          className="py-2 px-3 cursor-pointer hover:bg-blue-50 rounded flex items-center gap-2 text-sm"
-                        >
-                          <svg
-                            className="w-4 h-4 text-blue-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                            ></path>
-                          </svg>
-                          My Images
-                        </li>
                         <li
                           onClick={logout}
                           className="py-2 px-3 cursor-pointer hover:bg-red-50 rounded flex items-center gap-2 text-sm text-red-500"
