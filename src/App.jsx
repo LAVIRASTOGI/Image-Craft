@@ -1,19 +1,20 @@
 import { Routes, Route } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy } from "react";
 import { AnimatePresence } from "framer-motion";
 
 import Home from "./pages/Home";
-import Result from "./pages/Result";
-import BuyCredit from "./pages/BuyCredit";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import LoadingScreen from "./components/LoadingScreen";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from "./components/ProtectedRoute";
+
+const BuyCredit = lazy(() => import("./pages/BuyCredit"));
+const Result = lazy(() => import("./pages/Result"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
 
 const App = () => {
   const [loading, setLoading] = useState(true);
