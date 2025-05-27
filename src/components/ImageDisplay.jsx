@@ -1,10 +1,17 @@
-import { memo } from "react";
+import { memo, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 const ImageDisplay = memo(
   ({ image, uploadedImage, alt, loading, placeholder }) => {
+    const [imageLoaded, setImageLoaded] = useState(false);
+
+    // Reset image loaded state when image source changes
+    useEffect(() => {
+      setImageLoaded(false);
+    }, [image]);
+
     return (
-      <div className="relative overflow-hidden rounded-xl shadow-xl bg-gray-100 flex items-center justify-center border border-gray-200">
+      <div className="relative overflow-hidden rounded-xl shadow-xl bg-gray-100 flex items-center justify-center border border-gray-200 aspect-square md:aspect-video w-full">
         {placeholder ? (
           <div className="text-center p-4 sm:p-8">
             <svg
@@ -24,15 +31,24 @@ const ImageDisplay = memo(
             {placeholder}
           </div>
         ) : (
-          <img
-            className={`object-contain max-h-[90vh] ${
-              uploadedImage
-                ? "border-2 border-blue-300 shadow-lg p-1 rounded-lg"
-                : ""
-            }`}
-            src={image}
-            alt={alt}
-          />
+          <>
+            {/* Loading skeleton */}
+            {!imageLoaded && (
+              <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
+            )}
+            <img
+              className={`object-contain w-full h-full max-h-[90vh] ${
+                uploadedImage
+                  ? "border-2 border-blue-300 shadow-lg p-1 rounded-lg"
+                  : ""
+              } ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+              src={image}
+              alt={alt}
+              width="800"
+              height="600"
+              onLoad={() => setImageLoaded(true)}
+            />
+          </>
         )}
         <span
           className={`absolute bottom-0 left-0 h-2 bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 ${

@@ -34,19 +34,34 @@ const Footer = () => {
                 href="#"
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 transition-colors border border-blue-100"
               >
-                <img width={16} src={assets.facebook_icon} alt="Facebook" />
+                <img
+                  width={16}
+                  height={16}
+                  src={assets.facebook_icon}
+                  alt="Facebook"
+                />
               </a>
               <a
                 href="#"
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 transition-colors border border-blue-100"
               >
-                <img width={16} src={assets.twitter_icon} alt="Twitter" />
+                <img
+                  width={16}
+                  height={16}
+                  src={assets.twitter_icon}
+                  alt="Twitter"
+                />
               </a>
               <a
                 href="#"
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 transition-colors border border-blue-100"
               >
-                <img width={16} src={assets.instagram_icon} alt="Instagram" />
+                <img
+                  width={16}
+                  height={16}
+                  src={assets.instagram_icon}
+                  alt="Instagram"
+                />
               </a>
             </div>
           </motion.div>

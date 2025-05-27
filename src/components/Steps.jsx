@@ -42,7 +42,13 @@ const Steps = () => {
             {/* Step card */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 pt-10 border border-gray-100 h-full">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <img src={step.icon} alt={step.title} className="w-8 h-8" />
+                <img
+                  src={step.icon}
+                  alt={step.title}
+                  className="w-8 h-8"
+                  width="32"
+                  height="32"
+                />
               </div>
 
               <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">

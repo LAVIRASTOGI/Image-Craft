@@ -236,6 +236,8 @@ const BuyCredit = () => {
                     src={assets.razorpay_logo}
                     alt="Razorpay"
                     className="h-8"
+                    width="96"
+                    height="32"
                   />
                 </label>
               </div>
