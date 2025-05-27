@@ -1,5 +1,5 @@
 import { AppContext } from "../context/AppContext";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, startTransition } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 
@@ -10,7 +10,10 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     if (!token) {
-      navigate("/login");
+      // Use startTransition to avoid UI suspension on redirect
+      startTransition(() => {
+        navigate("/login");
+      });
     }
   }, [token, navigate]);
 
