@@ -177,17 +177,17 @@ const Header = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
         >
-          <h3 className="text-xl font-semibold text-center mb-6 text-gray-800">
+          <h3 className="text-xl font-semibold text-center mb-4 sm:mb-6 text-gray-800">
             See what our users are creating
           </h3>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 max-w-xs sm:max-w-md md:max-w-3xl lg:max-w-5xl mx-auto">
             {Array(4)
               .fill("")
               .map((item, index) => (
                 <motion.div
                   key={index}
-                  className="relative group overflow-hidden rounded-lg shadow-md aspect-square"
+                  className="relative group overflow-hidden rounded-lg shadow-md aspect-square max-w-[150px] sm:max-w-[200px] md:max-w-none mx-auto"
                   whileHover={{ scale: 1.05, zIndex: 10 }}
                 >
                   <motion.img
@@ -195,6 +195,7 @@ const Header = () => {
                     src={assets[`sample_img_${index + 1}`]}
                     width="300"
                     height="300"
+                    sizes="(max-width: 640px) 150px, 300px"
                     alt={`Sample image ${index + 1}`}
                     loading={index < 2 ? "eager" : "lazy"}
                     fetchPriority={index === 0 ? "high" : "auto"}
