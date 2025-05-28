@@ -1,0 +1,9 @@
+# robots.txt for ImageCraft
+User-agent: *
+Allow: /
+
+# Host
+Host: https://image-craft-blond.vercel.app
+
+# Sitemap location
+Sitemap: https://image-craft-blond.vercel.app/sitemap.xml 
